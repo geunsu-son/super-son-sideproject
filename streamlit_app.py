@@ -1,7 +1,6 @@
 import streamlit as st
-from bs4 import BeautifulSoup
-import pathlib
-import shutil
+import re
+import os
 
 GA_ID = "google_analytics"
 
@@ -23,20 +22,17 @@ GSC_VERIFICATION_META_TAG = """
 <meta name="google-site-verification" content="hA5Z8T9H4JpXgiH69j3LkKS5wtCLdUtT72R7oZekObc">
 """
 
-def inject_ga():
-    index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
-    soup = BeautifulSoup(index_path.read_text(), features="html.parser")
-    if not soup.find(id=GA_ID): 
-        bck_index = index_path.with_suffix('.bck')
-        if bck_index.exists():
-            shutil.copy(bck_index, index_path)  
-        else:
-            shutil.copy(index_path, bck_index)  
-        html = str(soup)
-        new_html = html.replace('<head>', '<head>\n' + GA_TRACKING_CODE + GSC_VERIFICATION_META_TAG)
-        index_path.write_text(new_html)
-
-inject_ga()
+index_html_file=os.path.dirname(st.__file__)+'/static/index.html'
+with open(index_html_file, 'r') as f:
+    data=f.read()
+    if len(re.findall('(gtag.js)', data))==0:
+        with open(index_html_file, 'w') as ff:
+            newdata=re.sub('<head>','<head>'+GA_TRACKING_CODE,data)
+            ff.write(newdata)
+    if len(re.findall('meta name="google-site-verification"', data))==0:
+        with open(index_html_file, 'w') as ff:
+            newdata=re.sub('<head>','<head>'+GSC_VERIFICATION_META_TAG,data)
+            ff.write(newdata)
 
 st.set_page_config(
     page_title="SUPER-SON 사이드프로젝트",
@@ -44,7 +40,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
 
 with st.sidebar:
     st.write(
