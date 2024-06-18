@@ -11,13 +11,13 @@ st.set_page_config(
 # Google Analytics tracking code
 GA_TRACKING_CODE = """
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXX-X"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'UA-XXXXXX-X');
+  gtag('config', {GA_ID});
 </script>
 """
 
