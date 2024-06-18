@@ -1,6 +1,13 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
+st.set_page_config(
+    page_title="SUPER-SON 사이드프로젝트",
+    page_icon="😃",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 # Google Analytics tracking code
 GA_TRACKING_CODE = """
 <!-- Google tag (gtag.js) -->
@@ -17,12 +24,6 @@ GA_TRACKING_CODE = """
 # Insert GA tracking code in the app
 components.html(GA_TRACKING_CODE, height=0, width=0)
 
-st.set_page_config(
-    page_title="SUPER-SON 사이드프로젝트",
-    page_icon="😃",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
 with st.sidebar:
     st.write(
         """
