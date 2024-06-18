@@ -1,23 +1,20 @@
 import streamlit as st
-import streamlit.components.v1 as components
+from bs4 import BeautifulSoup
+import pathlib
+import shutil
 
-st.set_page_config(
-    page_title="SUPER-SON 사이드프로젝트",
-    page_icon="😃",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+GA_ID = "google_analytics"
 
 # Google Analytics tracking code
 GA_TRACKING_CODE = """
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-24TZHQ6Y49"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YF36SE5BRW"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-24TZHQ6Y49');
+  gtag('config', 'G-YF36SE5BRW');
 </script>
 """
 
@@ -26,8 +23,28 @@ GSC_VERIFICATION_META_TAG = """
 <meta name="google-site-verification" content="hA5Z8T9H4JpXgiH69j3LkKS5wtCLdUtT72R7oZekObc">
 """
 
-# Insert GA tracking code in the app
-components.html(GA_TRACKING_CODE + GSC_VERIFICATION_META_TAG, height=0, width=0)
+def inject_ga():
+    index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
+    soup = BeautifulSoup(index_path.read_text(), features="html.parser")
+    if not soup.find(id=GA_ID): 
+        bck_index = index_path.with_suffix('.bck')
+        if bck_index.exists():
+            shutil.copy(bck_index, index_path)  
+        else:
+            shutil.copy(index_path, bck_index)  
+        html = str(soup)
+        new_html = html.replace('<head>', '<head>\n' + GA_TRACKING_CODE + GSC_VERIFICATION_META_TAG)
+        index_path.write_text(new_html)
+
+inject_ga()
+
+st.set_page_config(
+    page_title="SUPER-SON 사이드프로젝트",
+    page_icon="😃",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 
 with st.sidebar:
     st.write(
