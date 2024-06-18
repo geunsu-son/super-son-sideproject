@@ -1,4 +1,21 @@
 import streamlit as st
+import streamlit.components.v1 as components
+
+# Google Analytics tracking code
+GA_TRACKING_CODE = """
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXX-X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-XXXXXX-X');
+</script>
+"""
+
+# Insert GA tracking code in the app
+components.html(GA_TRACKING_CODE, height=0, width=0)
 
 st.set_page_config(
     page_title="SUPER-SON 사이드프로젝트",
@@ -6,19 +23,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
-st.html("""
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-24TZHQ6Y49"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-24TZHQ6Y49');
-</script>
-        """)
-
 with st.sidebar:
     st.write(
         """
