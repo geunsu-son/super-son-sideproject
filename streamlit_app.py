@@ -1,19 +1,23 @@
 import streamlit as st
-import re
-import os
+import streamlit.components.v1 as components
 
-GA_ID = "google_analytics"
+st.set_page_config(
+    page_title="SUPER-SON 사이드프로젝트",
+    page_icon="😃",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 # Google Analytics tracking code
 GA_TRACKING_CODE = """
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-YF36SE5BRW"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-24TZHQ6Y49"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-YF36SE5BRW');
+  gtag('config', 'G-24TZHQ6Y49');
 </script>
 """
 
@@ -22,24 +26,8 @@ GSC_VERIFICATION_META_TAG = """
 <meta name="google-site-verification" content="hA5Z8T9H4JpXgiH69j3LkKS5wtCLdUtT72R7oZekObc">
 """
 
-index_html_file=os.path.dirname(st.__file__)+'/static/index.html'
-with open(index_html_file, 'r') as f:
-    data=f.read()
-    if len(re.findall('(gtag.js)', data))==0:
-        with open(index_html_file, 'w') as ff:
-            newdata=re.sub('<head>','<head>'+GA_TRACKING_CODE,data)
-            ff.write(newdata)
-    if len(re.findall('meta name="google-site-verification"', data))==0:
-        with open(index_html_file, 'w') as ff:
-            newdata=re.sub('<head>','<head>'+GSC_VERIFICATION_META_TAG,data)
-            ff.write(newdata)
-
-st.set_page_config(
-    page_title="SUPER-SON 사이드프로젝트",
-    page_icon="😃",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+# Insert GA tracking code in the app
+components.html(GA_TRACKING_CODE + GSC_VERIFICATION_META_TAG, height=0, width=0)
 
 with st.sidebar:
     st.write(
