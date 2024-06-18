@@ -19,11 +19,11 @@ GA_TRACKING_CODE = """
 
   gtag('config', {GOOGLE_ANALYTICS_ID});
 </script>
-
 """
+
 # Google Search Console verification meta tag
 GSC_VERIFICATION_META_TAG = """
-<meta name="google-site-verification" content={GOOGLE_SEARCH_CONSOLE_ID}/>
+<meta name="google-site-verification" content={GOOGLE_SEARCH_CONSOLE_ID}>
 """
 
 # Insert GA tracking code in the app
