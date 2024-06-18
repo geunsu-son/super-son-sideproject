@@ -11,19 +11,19 @@ st.set_page_config(
 # Google Analytics tracking code
 GA_TRACKING_CODE = """
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id="""+GOOGLE_ANALYTICS_ID+"""></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id="""+st.secrets["GOOGLE_ANALYTICS_ID"]+"""></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', """+GOOGLE_ANALYTICS_ID+""");
+  gtag('config', """+st.secrets["GOOGLE_ANALYTICS_ID"]+""");
 </script>
 """
 
 # Google Search Console verification meta tag
 GSC_VERIFICATION_META_TAG = """
-<meta name="google-site-verification" content="""+GOOGLE_SEARCH_CONSOLE_ID+""">
+<meta name="google-site-verification" content="""+st.secrets["GOOGLE_SEARCH_CONSOLE_ID"]+""">
 """
 
 # Insert GA tracking code in the app
