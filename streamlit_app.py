@@ -20,11 +20,14 @@ GA_TRACKING_CODE = """
   gtag('config', {GOOGLE_ANALYTICS_ID});
 </script>
 
-<meta name="google-site-verification" content="{GOOGLE_SEARCH_CONSOLE_ID}" />
+"""
+# Google Search Console verification meta tag
+GSC_VERIFICATION_META_TAG = """
+<meta name="google-site-verification" content={GOOGLE_SEARCH_CONSOLE_ID}/>
 """
 
 # Insert GA tracking code in the app
-components.html(GA_TRACKING_CODE, height=0, width=0)
+components.html(GA_TRACKING_CODE + GSC_VERIFICATION_META_TAG, height=0, width=0)
 
 with st.sidebar:
     st.write(
