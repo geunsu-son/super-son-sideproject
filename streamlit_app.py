@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit_image_select import image_select
 
 st.set_page_config(
     page_title="SUPER-SON 사이드프로젝트",
@@ -7,6 +6,18 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+st.html("""
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-24TZHQ6Y49"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-24TZHQ6Y49');
+</script>
+        """)
 
 with st.sidebar:
     st.write(
