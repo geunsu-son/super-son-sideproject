@@ -22,6 +22,7 @@ st.sidebar.write(
     📞 Tel. 010-4430-2279  
     📩 E-mail. [gnsu0705@gmail.com](gnsu0705@gmail.com)  
     💻 Blog. [Super-Son](https://super-son.tistory.com/)
+    😎 Resume. [Super-Son](https://super-son.streamlit.app)
     """
 )
 
@@ -67,6 +68,7 @@ st.write(
 OCR의 버전이 5.0 이상이 아니라면 변환이 원활하지 않을 수 있습니다.
     """
 )
+st.page_link("https://super-son.tistory.com/4",label="제작 과정",icon="🛠")
 
 uploaded_image = st.file_uploader("이미지 업로드", type=["jpg", "png", "jpeg"])
 
