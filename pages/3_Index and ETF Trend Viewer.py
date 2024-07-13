@@ -3,6 +3,9 @@ import pandas as pd
 import yfinance as yf
 import altair as alt
 
+import appdirs as ad
+ad.user_cache_dir = lambda *args: "/tmp"
+
 st.set_page_config(
     page_title="Index and ETF Trend Viewer",
     page_icon="📈",
@@ -36,7 +39,7 @@ end_date = pd.Timestamp.today()
 start_date = end_date - pd.DateOffset(months=18)
 
 # Fetch data for NASDAQ and S&P 500 once
-# @st.cache_data(show_spinner="Loading Data...")
+@st.cache_data(show_spinner="Loading Data...")
 def fetch_data(ticker):
     data = yf.download(ticker, start=start_date, end=end_date)
     data.reset_index(inplace=True)
