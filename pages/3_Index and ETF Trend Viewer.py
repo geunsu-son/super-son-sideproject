@@ -33,7 +33,7 @@ st.divider()
 
 # Calculate the date for 1 year and 6 months ago from today
 end_date = pd.Timestamp.today()
-start_date = end_date - pd.DateOffset(years=1)
+start_date = end_date - pd.DateOffset(months=6)
 
 # Fetch data for NASDAQ and S&P 500 once
 @st.cache_data(show_spinner="Loading Data...")
@@ -43,20 +43,18 @@ def fetch_data(ticker):
     data['Date'] = data['Date'].dt.strftime('%Y-%m-%d')  # Convert date to string format
     return data
 
-try:
-    nasdaq_data = fetch_data('^IXIC')
-    sp500_data = fetch_data('^GSPC')
-    soxl_data = fetch_data('SOXL')
-    usd_data = fetch_data('UUP')  # USD ETF ticker is UUP
-except Exception as e:
-    st.error(f"Error fetching data: {e}")
+nasdaq_data = fetch_data('^IXIC')
+sp500_data = fetch_data('^GSPC')
+soxl_data = fetch_data('SOXL')
+usd_data = fetch_data('USD')
+voo_data = fetch_data('VOO')
+cony_data = fetch_data('CONY')
 
 
 # Function to create moving average
 def add_moving_averages(data):
     data['MA_20'] = data['Close'].rolling(window=20).mean()
     data['MA_60'] = data['Close'].rolling(window=60).mean()
-    data['MA_120'] = data['Close'].rolling(window=120).mean()
     return data
 
 nasdaq_data = add_moving_averages(nasdaq_data)
@@ -75,12 +73,7 @@ def check_low_vs_moving_averages(data, name):
     ma60 = last_row['MA_60']
     ma120 = last_row['MA_120']
 
-    if low_price < ma120:
-        st.sidebar.info(f'''
-### {name} - Last Day Low Price Check
-120일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
-''')
-    elif low_price < ma60:
+    if low_price < ma60:
         st.sidebar.info(f'''
 ### {name} - Last Day Low Price Check
 60일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
@@ -148,11 +141,7 @@ def create_candlestick_chart(data):
         alt.Y('MA_60:Q', title='Price')
     )
 
-    ma120 = base.mark_line(color='brown').encode(
-        alt.Y('MA_120:Q', title='Price')
-    )
-
-    chart = (rule + bar + ma20 + ma60 + ma120).properties(
+    chart = (rule + bar + ma20 + ma60).properties(
         width=800,
         height=400,
     )
