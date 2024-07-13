@@ -36,31 +36,16 @@ end_date = pd.Timestamp.today()
 start_date = end_date - pd.DateOffset(months=18)
 
 # Fetch data for NASDAQ and S&P 500 once
-# @st.cache_data(show_spinner="Loading Data...")
+@st.cache_data(show_spinner="Loading Data...")
 def fetch_data(ticker):
-    try:
-        data = yf.download(ticker, start=start_date, end=end_date)
+    with st.spinner(f'Please wait...Loading {ticker}'):
+        # Retrieve stock data
+        stock = yf.Ticker(ticker)
+        history = stock.history(period="1y", interval="1d")
+        data = pd.DataFrame(history)
         data.reset_index(inplace=True)
         data['Date'] = data['Date'].dt.strftime('%Y-%m-%d')  # Convert date to string format
         return data
-    except Exception as e:
-        st.error(f"Error fetching data for {ticker}: {e}")
-        return pd.DataFrame()
-
-
-with st.spinner('Please wait...'):
-    # Retrieve stock data
-    stock = yf.Ticker("^IXIC")
-    info = stock.info
-
-    st.subheader(f"^IXIC - {info.get('longName', 'N/A')}")
-    day_high = info.get('dayHigh', 'N/A')
-    day_low = info.get('dayLow', 'N/A')
-    st.write(day_high)
-    st.write(day_low)
-    history = stock.history(period="6mo", interval="1d")
-    st.write(pd.DataFrame(history["Close"]))
-
 
 nasdaq_data = fetch_data('^IXIC')
 sp500_data = fetch_data('^GSPC')
