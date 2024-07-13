@@ -4,7 +4,7 @@ import yfinance as yf
 import altair as alt
 
 st.set_page_config(
-    page_title="Invest - Index, ETF",
+    page_title="Index and ETF Trend Viewer",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -24,7 +24,7 @@ with st.sidebar:
     # Slider for selecting time period in months
     months = st.slider('Select Time Period (months)', 1, 12, 6)
 
-st.title('Invest - Index, ETF')
+st.title('Index and ETF Trend Viewer')
 st.write("""
 나스닥, S&P 500 지수의 20일 이동평균 선 그래프를 제공하는 사이트를 찾지 못해 제가 사용하기 위해 직접 제작했습니다.  
 보고 싶은 지수나 상품에 대한 그래프를 그리도록 제작했으며, 20일, 60일, 120일 이동평균 선을 기준으로 거래가격이 맞춰지면 사이드바에 알림이 표시됩니다.
