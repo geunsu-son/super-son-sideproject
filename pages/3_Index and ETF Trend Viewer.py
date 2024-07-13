@@ -22,7 +22,7 @@ with st.sidebar:
     )
     st.divider()
     # Slider for selecting time period in months
-    months = st.slider('Select Time Period (months)', 1, 12, 6)
+    months = st.slider('Select Time Period (months)', 1, 3, 3)
 
 st.title('Index and ETF Trend Viewer')
 st.write("""
@@ -31,9 +31,9 @@ st.write("""
 """)
 st.divider()
 
-# Calculate the date for 1 year and 6 months ago from today
+# Calculate the date for 3 months ago from today
 end_date = pd.Timestamp.today()
-start_date = end_date - pd.DateOffset(months=6)
+start_date = end_date - pd.DateOffset(months=3)
 
 # Fetch data for NASDAQ and S&P 500 once
 @st.cache_data(show_spinner="Loading Data...")
@@ -54,7 +54,6 @@ cony_data = fetch_data('CONY')
 # Function to create moving average
 def add_moving_averages(data):
     data['MA_20'] = data['Close'].rolling(window=20).mean()
-    data['MA_60'] = data['Close'].rolling(window=60).mean()
     return data
 
 nasdaq_data = add_moving_averages(nasdaq_data)
@@ -70,15 +69,8 @@ def check_low_vs_moving_averages(data, name):
     last_row = data.iloc[-1]
     low_price = last_row['Low']
     ma20 = last_row['MA_20']
-    ma60 = last_row['MA_60']
-    ma120 = last_row['MA_120']
 
-    if low_price < ma60:
-        st.sidebar.info(f'''
-### {name} - Last Day Low Price Check
-60일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
-''')
-    elif low_price < ma20:
+    if low_price < ma20:
         st.sidebar.info(f'''
 ### {name} - Last Day Low Price Check
 20일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
@@ -137,11 +129,7 @@ def create_candlestick_chart(data):
         alt.Y('MA_20:Q', title='Price')
     )
 
-    ma60 = base.mark_line(color='green').encode(
-        alt.Y('MA_60:Q', title='Price')
-    )
-
-    chart = (rule + bar + ma20 + ma60).properties(
+    chart = (rule + bar + ma20).properties(
         width=800,
         height=400,
     )
