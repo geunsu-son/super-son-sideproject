@@ -33,7 +33,7 @@ st.divider()
 
 # Calculate the date for 1 year and 6 months ago from today
 end_date = pd.Timestamp.today()
-start_date = end_date - pd.DateOffset(years==1)
+start_date = end_date - pd.DateOffset(years=1)
 
 # Fetch data for NASDAQ and S&P 500 once
 @st.cache_data(show_spinner="Loading Data...")
