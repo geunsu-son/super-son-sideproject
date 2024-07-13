@@ -3,4 +3,3 @@ Pillow
 opencv-python
 opencv-python-headless
 yfinance
-appdirs
