@@ -43,8 +43,8 @@ def fetch_data(ticker):
     data['Date'] = data['Date'].dt.strftime('%Y-%m-%d')  # Convert date to string format
     return data
 
-nasdaq_data = fetch_data('^IXIC')
-sp500_data = fetch_data('^GSPC')
+# nasdaq_data = fetch_data('^IXIC')
+# sp500_data = fetch_data('^GSPC')
 soxl_data = fetch_data('SOXL')
 usd_data = fetch_data('USD')
 voo_data = fetch_data('VOO')
@@ -56,8 +56,8 @@ def add_moving_averages(data):
     data['MA_20'] = data['Close'].rolling(window=20).mean()
     return data
 
-nasdaq_data = add_moving_averages(nasdaq_data)
-sp500_data = add_moving_averages(sp500_data)
+# nasdaq_data = add_moving_averages(nasdaq_data)
+# sp500_data = add_moving_averages(sp500_data)
 soxl_data = add_moving_averages(soxl_data)
 usd_data = add_moving_averages(usd_data)
 voo_data = add_moving_averages(voo_data)
