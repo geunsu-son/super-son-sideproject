@@ -33,7 +33,7 @@ st.divider()
 
 # Calculate the date for 1 year and 6 months ago from today
 end_date = pd.Timestamp.today()
-start_date = end_date - pd.DateOffset(months=18)
+start_date = end_date - pd.DateOffset(years==1)
 
 # Fetch data for NASDAQ and S&P 500 once
 @st.cache_data(show_spinner="Loading Data...")
@@ -43,12 +43,13 @@ def fetch_data(ticker):
     data['Date'] = data['Date'].dt.strftime('%Y-%m-%d')  # Convert date to string format
     return data
 
-nasdaq_data = fetch_data('^IXIC')
-sp500_data = fetch_data('^GSPC')
-soxl_data = fetch_data('SOXL')
-usd_data = fetch_data('USD')
-voo_data = fetch_data('VOO')
-cony_data = fetch_data('CONY')
+try:
+    nasdaq_data = fetch_data('^IXIC')
+    sp500_data = fetch_data('^GSPC')
+    soxl_data = fetch_data('SOXL')
+    usd_data = fetch_data('UUP')  # USD ETF ticker is UUP
+except Exception as e:
+    st.error(f"Error fetching data: {e}")
 
 
 # Function to create moving average
