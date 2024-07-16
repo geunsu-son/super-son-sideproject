@@ -78,14 +78,18 @@ def check_low_vs_moving_averages(data, name):
     ma60 = last_row['MA_60']
     ma120 = last_row['MA_120']
 
+    st.sidebar.info(f'''
+### Last Updated Day - {last_row['Date']}
+''')
+    
     if low_price < ma120:
         st.sidebar.info(f'''
-### {name} - Last Day Low Price Check
+### {name}
 120일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
 ''')
     elif low_price < ma60:
         st.sidebar.info(f'''
-### {name} - Last Day Low Price Check
+### {name}
 60일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
 ''')
     elif low_price < ma20:
