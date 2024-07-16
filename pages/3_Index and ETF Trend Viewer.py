@@ -70,6 +70,10 @@ voo_data = add_moving_averages(voo_data)
 cony_data = add_moving_averages(cony_data)
 
 
+st.sidebar.info(f'''
+### Last Updated Day - {nasdaq_data.iloc[-1]['Date']}
+''')
+
 # Sidebar with last day 'Low' price comparison
 def check_low_vs_moving_averages(data, name):
     last_row = data.iloc[-1]
@@ -78,10 +82,6 @@ def check_low_vs_moving_averages(data, name):
     ma60 = last_row['MA_60']
     ma120 = last_row['MA_120']
 
-    st.sidebar.info(f'''
-### Last Updated Day - {last_row['Date']}
-''')
-    
     if low_price < ma120:
         st.sidebar.info(f'''
 ### {name}
