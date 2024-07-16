@@ -94,12 +94,12 @@ def check_low_vs_moving_averages(data, name):
 ''')
     elif low_price < ma20:
         st.sidebar.info(f'''
-### {name} - Last Day Low Price Check
+### {name}
 20일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
 ''')
     elif low_price*.99 < ma20:
         st.sidebar.info(f'''
-### {name} - Last Day Low Price Check
+### {name}
 가격이 1% 낮아지면 20일 이동평균보다 가격이 낮아져요!
 ''')
 
