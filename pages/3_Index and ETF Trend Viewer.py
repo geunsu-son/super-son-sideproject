@@ -22,7 +22,7 @@ with st.sidebar:
     )
     st.divider()
     # Slider for selecting time period in months
-    months = st.slider("Select Time Period (months)", 1, 12, 6)
+    months = st.slider("Select Time Period (months)", 1, 12, 4)
 
 st.title("Index and ETF Trend Viewer")
 st.write(
@@ -121,7 +121,6 @@ def check_low_vs_moving_averages(data, name):
 """
         )
 
-
 check_low_vs_moving_averages(nasdaq_data, "NASDAQ")
 check_low_vs_moving_averages(sp500_data, "S&P 500")
 check_low_vs_moving_averages(soxl_data, "SOXL")
@@ -155,7 +154,7 @@ def create_candlestick_chart(data):
     with col2:
         st.info(f"MA_20 = %.2f" % last_ma_20)
 
-    view_data = data[["Date", "Low", "Close"]][-5:]
+    view_data = data[["Date", "Low", "Close"]][-3:]
     view_data["Low_Diff"] = data["Low"] - last_ma_20
     view_data["Low_Diff%"] = view_data["Low_Diff"] / data["Close"] * 100
     view_data["Low_Diff%"] = view_data["Low_Diff%"].apply(
@@ -247,6 +246,7 @@ with col2:
     sp500_chart = create_candlestick_chart(sp500_data_filtered)
     st.altair_chart(sp500_chart, use_container_width=True)
 
+st.divider()
 col1, col2 = st.columns(2, gap="large")
 with col1:
     st.subheader("SOXL ETF")
@@ -258,6 +258,7 @@ with col2:
     usd_chart = create_candlestick_chart(usd_data_filtered)
     st.altair_chart(usd_chart, use_container_width=True)
 
+st.divider()
 col1, col2 = st.columns(2, gap="large")
 with col1:
     st.subheader("VOO ETF")
