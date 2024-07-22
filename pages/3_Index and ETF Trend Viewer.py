@@ -40,7 +40,7 @@ start_date = end_date - pd.DateOffset(months=14)
 
 # Fetch data
 def fetch_data(ticker):
-    with st.spinner(f"Please wait...Loading {ticker}"):
+    with st.spinner(f"Please wait...Loading Data"):
         # Retrieve stock data
         stock = yf.Ticker(ticker)
         history = stock.history(period="1y", interval="1d")
