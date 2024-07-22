@@ -146,39 +146,51 @@ cony_data_filtered = filter_data(cony_data, months)
 
 # Function to View Last 5 Days Dataframe and create candlestick chart with moving averages
 def create_candlestick_chart(data):
-    last_ma_20 = data.iloc[-1]["MA_20"]
+    last_ma20 = data.iloc[-1]["MA_20"]
+    last_ma60 = data.iloc[-1]["MA_60"]
+    last_ma120 = data.iloc[-1]["MA_120"]
 
     col1, col2, col3 = st.columns(3)
     with col1:
         st.info(f"Last Close = %.2f" % data.iloc[-1]["Close"])
     with col2:
-        st.info(f"MA_20 = %.2f" % last_ma_20)
+        st.info(f"MA_20 = %.2f" % last_ma20)
 
     view_data = data[["Date", "Low", "Close"]][-3:]
-    view_data["Low_Diff"] = data["Low"] - last_ma_20
+    view_data["Low_Diff"] = data["Low"] - last_ma20
     view_data["Low_Diff%"] = view_data["Low_Diff"] / data["Close"] * 100
     view_data["Low_Diff%"] = view_data["Low_Diff%"].apply(
         lambda x: str("%.2f" % (x)) + "%" if x > 1 else str("%.2f" % (x)) + "% 💡" if x > 0 else str("%.2f" % (x)) + "% 🔥"
     )
 
-    view_data["Close_Diff"] = data["Close"] - last_ma_20
+    view_data["Close_Diff"] = data["Close"] - last_ma20
     view_data["Close_Diff%"] = view_data["Close_Diff"] / data["Close"] * 100
     view_data["Close_Diff%"] = view_data["Close_Diff%"].apply(
         lambda x: str("%.2f" % (x)) + "%" if x > 1 else str("%.2f" % (x)) + "% 💡" if x > 0 else str("%.2f" % (x)) + "% 🔥"
     )
 
-    if len(view_data[view_data["Close_Diff"] < 0]) > 0:
+    view_data["Close_Diff_60"] = data["Close"] - last_ma60
+    view_data["Close_Diff_120"] = data["Close"] - last_ma120
+
+    if len(view_data[view_data["Close_Diff_120"] < 0]) > 0:
+        with col3:
+            st.error(
+                "120일선 터치 : {}".format(
+                    view_data[view_data["Close_Diff_120"] < 0].reset_index().iloc[-1, 1]
+                )
+            )
+    elif len(view_data[view_data["Close_Diff_60"] < 0]) > 0:
+        with col3:
+            st.error(
+                "60일선 터치 : {}".format(
+                    view_data[view_data["Close_Diff_60"] < 0].reset_index().iloc[-1, 1]
+                )
+            )
+    elif len(view_data[view_data["Close_Diff"] < 0]) > 0:
         with col3:
             st.error(
                 "20일선 터치 : {}".format(
                     view_data[view_data["Close_Diff"] < 0].reset_index().iloc[-1, 1]
-                )
-            )
-    elif len(view_data[view_data["Low_Diff"] < 0]) > 0:
-        with col3:
-            st.error(
-                "20일선 터치 : {}".format(
-                    view_data[view_data["Low_Diff"] < 0].reset_index().iloc[-1, 1]
                 )
             )
 
