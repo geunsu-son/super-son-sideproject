@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import altair as alt
-from yahoo_fin import stock_info
 
 st.set_page_config(
     page_title="Index and ETF Trend Viewer",
@@ -52,9 +51,6 @@ def fetch_data(ticker):
         )  # Convert date to string format
         return data
 
-def get_real_time_stock_price(ticker):
-    price = stock_info.get_live_price(ticker)
-    return price
 
 nasdaq_data = fetch_data("^IXIC")
 sp500_data = fetch_data("^GSPC")
@@ -253,47 +249,35 @@ def create_candlestick_chart(data):
 # Create and display charts
 col1, col2 = st.columns(2, gap="large")
 with col1:
-    ticker = "^IXIC"
-    price = get_real_time_stock_price(ticker)
-    st.subheader(f"NASDAQ Index: ${price:.2f}")
+    st.subheader("NASDAQ Index")
     nasdaq_chart = create_candlestick_chart(nasdaq_data_filtered)
     st.altair_chart(nasdaq_chart, use_container_width=True)
 
 with col2:
-    ticker = "^GSPC"
-    price = get_real_time_stock_price(ticker)
-    st.subheader(f"S&P 500 Index: ${price:.2f}")
+    st.subheader("S&P 500 Index")
     sp500_chart = create_candlestick_chart(sp500_data_filtered)
     st.altair_chart(sp500_chart, use_container_width=True)
 
 st.divider()
 col1, col2 = st.columns(2, gap="large")
 with col1:
-    ticker = "SOXL"
-    price = get_real_time_stock_price(ticker)
-    st.subheader(f"SOXL ETF: ${price:.2f}")
+    st.subheader("SOXL ETF")
     soxl_chart = create_candlestick_chart(soxl_data_filtered)
     st.altair_chart(soxl_chart, use_container_width=True)
 
 with col2:
-    ticker = "USD"
-    price = get_real_time_stock_price(ticker)
-    st.subheader(f"USD ETF: ${price:.2f}")
+    st.subheader("USD ETF")
     usd_chart = create_candlestick_chart(usd_data_filtered)
     st.altair_chart(usd_chart, use_container_width=True)
 
 st.divider()
 col1, col2 = st.columns(2, gap="large")
 with col1:
-    ticker = "VOO"
-    price = get_real_time_stock_price(ticker)
-    st.subheader(f"VOO ETF: ${price:.2f}")
+    st.subheader("VOO ETF")
     voo_chart = create_candlestick_chart(voo_data_filtered)
     st.altair_chart(voo_chart, use_container_width=True)
 
 with col2:
-    ticker = "CONY"
-    price = get_real_time_stock_price(ticker)
-    st.subheader(f"CONY ETF: ${price:.2f}")
+    st.subheader("CONY ETF")
     cony_chart = create_candlestick_chart(cony_data_filtered)
     st.altair_chart(cony_chart, use_container_width=True)
