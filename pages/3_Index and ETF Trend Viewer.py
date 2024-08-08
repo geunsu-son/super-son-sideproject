@@ -28,7 +28,7 @@ st.title("Index and ETF Trend Viewer")
 st.write(
     """
 나스닥, S&P 500 지수의 20일 이동평균 선 그래프를 제공하는 사이트를 찾지 못해 제가 사용하기 위해 직접 제작했습니다.  
-보고 싶은 지수나 상품에 대한 그래프를 그리도록 제작했으며, 20일, 60일, 120일 이동평균 선을 기준으로 거래가격이 맞춰지면 사이드바에 알림이 표시됩니다.
+보고 싶은 지수나 상품에 대한 그래프를 그리도록 제작했으며, 20일, 60일, 200일 이동평균 선을 기준으로 거래가격이 맞춰지면 사이드바에 알림이 표시됩니다.
 """
 )
 st.divider()
@@ -64,7 +64,7 @@ cony_data = fetch_data("CONY")
 def add_moving_averages(data):
     data["MA_20"] = data["Close"].rolling(window=20).mean()
     data["MA_60"] = data["Close"].rolling(window=60).mean()
-    data["MA_120"] = data["Close"].rolling(window=120).mean()
+    data["MA_200"] = data["Close"].rolling(window=200).mean()
     return data
 
 
@@ -90,13 +90,13 @@ def check_low_vs_moving_averages(data, name):
     low_price = last_row["Low"]
     ma20 = last_row["MA_20"]
     ma60 = last_row["MA_60"]
-    ma120 = last_row["MA_120"]
+    ma200 = last_row["MA_200"]
 
-    if low_price < ma120:
+    if low_price < ma200:
         st.sidebar.info(
             f"""
 **{name}**  
-##### 120일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
+##### 200일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
 """
         )
     elif low_price < ma60:
@@ -148,7 +148,7 @@ cony_data_filtered = filter_data(cony_data, months)
 def create_candlestick_chart(data):
     last_ma20 = data.iloc[-1]["MA_20"]
     last_ma60 = data.iloc[-1]["MA_60"]
-    last_ma120 = data.iloc[-1]["MA_120"]
+    last_ma200 = data.iloc[-1]["MA_200"]
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -170,13 +170,13 @@ def create_candlestick_chart(data):
     )
 
     view_data["Close_Diff_60"] = data["Close"] - last_ma60
-    view_data["Close_Diff_120"] = data["Close"] - last_ma120
+    view_data["Close_Diff_200"] = data["Close"] - last_ma200
 
-    if len(view_data[view_data["Close_Diff_120"] < 0]) > 0:
+    if len(view_data[view_data["Close_Diff_200"] < 0]) > 0:
         with col3:
             st.error(
-                "120일선 터치 : {}".format(
-                    view_data[view_data["Close_Diff_120"] < 0].reset_index().iloc[-1, 1]
+                "200일선 터치 : {}".format(
+                    view_data[view_data["Close_Diff_200"] < 0].reset_index().iloc[-1, 1]
                 )
             )
     elif len(view_data[view_data["Close_Diff_60"] < 0]) > 0:
@@ -236,9 +236,9 @@ def create_candlestick_chart(data):
 
     ma60 = base.mark_line(color="green").encode(alt.Y("MA_60:Q"))
 
-    ma120 = base.mark_line(color="brown").encode(alt.Y("MA_120:Q"))
+    ma200 = base.mark_line(color="brown").encode(alt.Y("MA_200:Q"))
 
-    chart = (rule + bar + ma20 + ma60 + ma120).properties(
+    chart = (rule + bar + ma20 + ma60 + ma200).properties(
         width=800,
         height=400,
     )
