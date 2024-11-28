@@ -28,7 +28,7 @@ st.title("Index and ETF Trend Viewer")
 st.write(
     """
 나스닥, S&P 500 지수의 20일 이동평균 선 그래프를 제공하는 사이트를 찾지 못해 제가 사용하기 위해 직접 제작했습니다.  
-보고 싶은 지수나 상품에 대한 그래프를 그리도록 제작했으며, 20일, 60일, 200일 이동평균 선을 기준으로 거래가격이 맞춰지면 사이드바에 알림이 표시됩니다.
+보고 싶은 지수나 상품에 대한 그래프를 그리도록 제작했으며, 20일, 60일, 120일 이동평균 선을 기준으로 거래가격이 맞춰지면 사이드바에 알림이 표시됩니다.
 """
 )
 st.divider()
@@ -54,9 +54,7 @@ def fetch_data(ticker):
 
 nasdaq_data = fetch_data("^IXIC")
 sp500_data = fetch_data("^GSPC")
-soxl_data = fetch_data("SOXL")
 usd_data = fetch_data("USD")
-voo_data = fetch_data("VOO")
 cony_data = fetch_data("CONY")
 
 
@@ -64,15 +62,13 @@ cony_data = fetch_data("CONY")
 def add_moving_averages(data):
     data["MA_20"] = data["Close"].rolling(window=20).mean()
     data["MA_60"] = data["Close"].rolling(window=60).mean()
-    data["MA_200"] = data["Close"].rolling(window=200).mean()
+    data["MA_120"] = data["Close"].rolling(window=120).mean()
     return data
 
 
 nasdaq_data = add_moving_averages(nasdaq_data)
 sp500_data = add_moving_averages(sp500_data)
-soxl_data = add_moving_averages(soxl_data)
 usd_data = add_moving_averages(usd_data)
-voo_data = add_moving_averages(voo_data)
 cony_data = add_moving_averages(cony_data)
 
 
@@ -90,13 +86,13 @@ def check_low_vs_moving_averages(data, name):
     low_price = last_row["Low"]
     ma20 = last_row["MA_20"]
     ma60 = last_row["MA_60"]
-    ma200 = last_row["MA_200"]
+    ma120 = last_row["MA_120"]
 
-    if low_price < ma200:
+    if low_price < ma120:
         st.sidebar.info(
             f"""
 **{name}**  
-##### 200일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
+##### 120일 이동평균보다 낮은 가격에 거래한 기록이 있어요!
 """
         )
     elif low_price < ma60:
@@ -123,9 +119,7 @@ def check_low_vs_moving_averages(data, name):
 
 check_low_vs_moving_averages(nasdaq_data, "NASDAQ")
 check_low_vs_moving_averages(sp500_data, "S&P 500")
-check_low_vs_moving_averages(soxl_data, "SOXL")
 check_low_vs_moving_averages(usd_data, "USD")
-check_low_vs_moving_averages(voo_data, "VOO")
 check_low_vs_moving_averages(cony_data, "CONY")
 
 
@@ -138,9 +132,7 @@ def filter_data(data, months):
 
 nasdaq_data_filtered = filter_data(nasdaq_data, months)
 sp500_data_filtered = filter_data(sp500_data, months)
-soxl_data_filtered = filter_data(soxl_data, months)
 usd_data_filtered = filter_data(usd_data, months)
-voo_data_filtered = filter_data(voo_data, months)
 cony_data_filtered = filter_data(cony_data, months)
 
 
@@ -148,13 +140,11 @@ cony_data_filtered = filter_data(cony_data, months)
 def create_candlestick_chart(data):
     last_ma20 = data.iloc[-1]["MA_20"]
     last_ma60 = data.iloc[-1]["MA_60"]
-    last_ma200 = data.iloc[-1]["MA_200"]
+    last_ma120 = data.iloc[-1]["MA_120"]
 
     col1, col2, col3 = st.columns(3)
     with col1:
         st.info(f"Last Close = %.2f" % data.iloc[-1]["Close"])
-    with col2:
-        st.info(f"MA_20 = %.2f" % last_ma20)
 
     view_data = data[["Date", "Low", "Close"]][-3:]
     view_data["Low_Diff"] = data["Low"] - last_ma20
@@ -170,16 +160,20 @@ def create_candlestick_chart(data):
     )
 
     view_data["Close_Diff_60"] = data["Close"] - last_ma60
-    view_data["Close_Diff_200"] = data["Close"] - last_ma200
+    view_data["Close_Diff_120"] = data["Close"] - last_ma120
 
-    if len(view_data[view_data["Close_Diff_200"] < 0]) > 0:
+    if len(view_data[view_data["Close_Diff_120"] < 0]) > 0:
+        with col2:
+            st.info(f"MA_20 = %.2f" % last_ma120)
         with col3:
             st.error(
-                "200일선 터치 : {}".format(
-                    view_data[view_data["Close_Diff_200"] < 0].reset_index().iloc[-1, 1]
+                "120일선 터치 : {}".format(
+                    view_data[view_data["Close_Diff_120"] < 0].reset_index().iloc[-1, 1]
                 )
             )
     elif len(view_data[view_data["Close_Diff_60"] < 0]) > 0:
+        with col2:
+            st.info(f"MA_20 = %.2f" % last_ma60)
         with col3:
             st.error(
                 "60일선 터치 : {}".format(
@@ -187,6 +181,8 @@ def create_candlestick_chart(data):
                 )
             )
     elif len(view_data[view_data["Close_Diff"] < 0]) > 0:
+        with col2:
+            st.info(f"MA_20 = %.2f" % last_ma20)
         with col3:
             st.error(
                 "20일선 터치 : {}".format(
@@ -236,9 +232,9 @@ def create_candlestick_chart(data):
 
     ma60 = base.mark_line(color="green").encode(alt.Y("MA_60:Q"))
 
-    ma200 = base.mark_line(color="brown").encode(alt.Y("MA_200:Q"))
+    ma120 = base.mark_line(color="brown").encode(alt.Y("MA_120:Q"))
 
-    chart = (rule + bar + ma20 + ma60 + ma200).properties(
+    chart = (rule + bar + ma20 + ma60 + ma120).properties(
         width=800,
         height=400,
     )
@@ -261,23 +257,11 @@ with col2:
 st.divider()
 col1, col2 = st.columns(2, gap="large")
 with col1:
-    st.subheader("SOXL ETF")
-    soxl_chart = create_candlestick_chart(soxl_data_filtered)
-    st.altair_chart(soxl_chart, use_container_width=True)
+    st.subheader("CONY ETF")
+    cony_chart = create_candlestick_chart(cony_data_filtered)
+    st.altair_chart(cony_chart, use_container_width=True)
 
 with col2:
     st.subheader("USD ETF")
     usd_chart = create_candlestick_chart(usd_data_filtered)
     st.altair_chart(usd_chart, use_container_width=True)
-
-st.divider()
-col1, col2 = st.columns(2, gap="large")
-with col1:
-    st.subheader("VOO ETF")
-    voo_chart = create_candlestick_chart(voo_data_filtered)
-    st.altair_chart(voo_chart, use_container_width=True)
-
-with col2:
-    st.subheader("CONY ETF")
-    cony_chart = create_candlestick_chart(cony_data_filtered)
-    st.altair_chart(cony_chart, use_container_width=True)
