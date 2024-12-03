@@ -164,7 +164,7 @@ def create_candlestick_chart(data):
 
     if len(view_data[view_data["Close_Diff_120"] < 0]) > 0:
         with col2:
-            st.info(f"MA_20 = %.2f" % last_ma120)
+            st.info(f"MA_120 = %.2f" % last_ma120)
         with col3:
             st.error(
                 "120일선 터치 : {}".format(
@@ -173,7 +173,7 @@ def create_candlestick_chart(data):
             )
     elif len(view_data[view_data["Close_Diff_60"] < 0]) > 0:
         with col2:
-            st.info(f"MA_20 = %.2f" % last_ma60)
+            st.info(f"MA_60 = %.2f" % last_ma60)
         with col3:
             st.error(
                 "60일선 터치 : {}".format(
@@ -189,6 +189,9 @@ def create_candlestick_chart(data):
                     view_data[view_data["Close_Diff"] < 0].reset_index().iloc[-1, 1]
                 )
             )
+    else:
+        with col2:
+            st.info(f"MA_20 = %.2f" % last_ma20)
 
     st.dataframe(
         view_data[
