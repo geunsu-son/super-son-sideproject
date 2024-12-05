@@ -275,5 +275,5 @@ st.divider()
 col1, col2 = st.columns(2, gap="large")
 with col1:
     st.subheader("IONQ ETF")
-    cony_chart = create_candlestick_chart(ionq_data_filtered)
+    ionq_chart = create_candlestick_chart(ionq_data_filtered)
     st.altair_chart(ionq_chart, use_container_width=True)
