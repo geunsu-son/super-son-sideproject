@@ -123,7 +123,7 @@ check_low_vs_moving_averages(nasdaq_data, "NASDAQ")
 check_low_vs_moving_averages(sp500_data, "S&P 500")
 check_low_vs_moving_averages(usd_data, "USD")
 check_low_vs_moving_averages(cony_data, "CONY")
-
+check_low_vs_moving_averages(ionq_data, "IONQ")
 
 # Function to filter data based on the selected period
 def filter_data(data, months):
@@ -136,7 +136,7 @@ nasdaq_data_filtered = filter_data(nasdaq_data, months)
 sp500_data_filtered = filter_data(sp500_data, months)
 usd_data_filtered = filter_data(usd_data, months)
 cony_data_filtered = filter_data(cony_data, months)
-
+ionq_data_filtered = filter_data(ionq_data, months)
 
 # Function to View Last 5 Days Dataframe and create candlestick chart with moving averages
 def create_candlestick_chart(data):
