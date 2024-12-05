@@ -56,6 +56,7 @@ nasdaq_data = fetch_data("^IXIC")
 sp500_data = fetch_data("^GSPC")
 usd_data = fetch_data("USD")
 cony_data = fetch_data("CONY")
+ionq_data = fetch_data("IONQ")
 
 
 # Function to create moving average
@@ -70,6 +71,7 @@ nasdaq_data = add_moving_averages(nasdaq_data)
 sp500_data = add_moving_averages(sp500_data)
 usd_data = add_moving_averages(usd_data)
 cony_data = add_moving_averages(cony_data)
+ionq_data = add_moving_averages(ionq_data)
 
 
 st.sidebar.error(
@@ -268,3 +270,10 @@ with col2:
     st.subheader("USD ETF")
     usd_chart = create_candlestick_chart(usd_data_filtered)
     st.altair_chart(usd_chart, use_container_width=True)
+
+st.divider()
+col1, col2 = st.columns(2, gap="large")
+with col1:
+    st.subheader("IONQ ETF")
+    cony_chart = create_candlestick_chart(ionq_data_filtered)
+    st.altair_chart(ionq_chart, use_container_width=True)
