@@ -22,7 +22,7 @@ with st.sidebar:
     )
     st.divider()
     # Slider for selecting time period in months
-    months = st.slider("Select Time Period (months)", 1, 12, 4)
+    months = st.slider("Select Time Period (months)", 1, 12, 10)
 
 st.title("Index and ETF Trend Viewer")
 st.write(
@@ -38,6 +38,13 @@ end_date = pd.Timestamp.today()
 start_date = end_date - pd.DateOffset(months=14)
 
 
+st.sidebar.error(
+    f"""
+**Last Updated Day**  
+{str(end_date)[:10]}
+"""
+)
+
 # Fetch data
 def fetch_data(ticker):
     with st.spinner(f"Please wait...Loading Data"):
@@ -52,34 +59,12 @@ def fetch_data(ticker):
         return data
 
 
-nasdaq_data = fetch_data("^IXIC")
-sp500_data = fetch_data("^GSPC")
-usd_data = fetch_data("USD")
-cony_data = fetch_data("CONY")
-ionq_data = fetch_data("IONQ")
-
-
 # Function to create moving average
 def add_moving_averages(data):
     data["MA_20"] = data["Close"].rolling(window=20).mean()
     data["MA_60"] = data["Close"].rolling(window=60).mean()
     data["MA_120"] = data["Close"].rolling(window=120).mean()
     return data
-
-
-nasdaq_data = add_moving_averages(nasdaq_data)
-sp500_data = add_moving_averages(sp500_data)
-usd_data = add_moving_averages(usd_data)
-cony_data = add_moving_averages(cony_data)
-ionq_data = add_moving_averages(ionq_data)
-
-
-st.sidebar.error(
-    f"""
-**Last Updated Day**  
-{nasdaq_data.iloc[-1]['Date']}
-"""
-)
 
 
 # Sidebar with last day 'Low' price comparison
@@ -119,12 +104,6 @@ def check_low_vs_moving_averages(data, name):
 """
         )
 
-check_low_vs_moving_averages(nasdaq_data, "NASDAQ")
-check_low_vs_moving_averages(sp500_data, "S&P 500")
-check_low_vs_moving_averages(usd_data, "USD")
-check_low_vs_moving_averages(cony_data, "CONY")
-check_low_vs_moving_averages(ionq_data, "IONQ")
-
 # Function to filter data based on the selected period
 def filter_data(data, months):
     start_filter_date = end_date - pd.DateOffset(months=months)
@@ -132,28 +111,18 @@ def filter_data(data, months):
     return filtered_data
 
 
-nasdaq_data_filtered = filter_data(nasdaq_data, months)
-sp500_data_filtered = filter_data(sp500_data, months)
-usd_data_filtered = filter_data(usd_data, months)
-cony_data_filtered = filter_data(cony_data, months)
-ionq_data_filtered = filter_data(ionq_data, months)
-
 # Function to View Last 5 Days Dataframe and create candlestick chart with moving averages
 def create_candlestick_chart(data):
     last_ma20 = data.iloc[-1]["MA_20"]
     last_ma60 = data.iloc[-1]["MA_60"]
     last_ma120 = data.iloc[-1]["MA_120"]
 
+    # =============== 최근 주가 그리기 ===============
     col1, col2, col3 = st.columns(3)
     with col1:
         st.info(f"Last Close = %.2f" % data.iloc[-1]["Close"])
 
-    view_data = data[["Date", "Low", "Close"]][-3:]
-    view_data["Low_Diff"] = data["Low"] - last_ma20
-    view_data["Low_Diff%"] = view_data["Low_Diff"] / data["Close"] * 100
-    view_data["Low_Diff%"] = view_data["Low_Diff%"].apply(
-        lambda x: str("%.2f" % (x)) + "%" if x > 1 else str("%.2f" % (x)) + "% 💡" if x > 0 else str("%.2f" % (x)) + "% 🔥"
-    )
+    view_data = data[["Date", "Low", "High", "Close"]][-3:]
 
     view_data["Close_Diff"] = data["Close"] - last_ma20
     view_data["Close_Diff%"] = view_data["Close_Diff"] / data["Close"] * 100
@@ -200,8 +169,7 @@ def create_candlestick_chart(data):
             [
                 "Date",
                 "Low",
-                "Low_Diff",
-                "Low_Diff%",
+                "High",
                 "Close",
                 "Close_Diff",
                 "Close_Diff%",
@@ -213,6 +181,8 @@ def create_candlestick_chart(data):
             "Close": st.column_config.NumberColumn("Close Price", format="%.2f")
         },
     )
+
+    # =============== 일봉차트 그리기 ===============
     base = alt.Chart(data).encode(
         alt.X("Date:N", title="Date")  # Date column is now in string format
     )
@@ -234,9 +204,7 @@ def create_candlestick_chart(data):
     )
 
     ma20 = base.mark_line(color="orange").encode(alt.Y("MA_20:Q"))
-
     ma60 = base.mark_line(color="green").encode(alt.Y("MA_60:Q"))
-
     ma120 = base.mark_line(color="brown").encode(alt.Y("MA_120:Q"))
 
     chart = (rule + bar + ma20 + ma60 + ma120).properties(
@@ -247,33 +215,38 @@ def create_candlestick_chart(data):
     return chart
 
 
-# Create and display charts
-col1, col2 = st.columns(2, gap="large")
-with col1:
-    st.subheader("NASDAQ Index")
-    nasdaq_chart = create_candlestick_chart(nasdaq_data_filtered)
-    st.altair_chart(nasdaq_chart, use_container_width=True)
+nasdaq_data = fetch_data("^IXIC")
+sp500_data = fetch_data("^GSPC")
+usd_data = fetch_data("USD")
+cony_data = fetch_data("CONY")
+ionq_data = fetch_data("IONQ")
 
-with col2:
-    st.subheader("S&P 500 Index")
-    sp500_chart = create_candlestick_chart(sp500_data_filtered)
-    st.altair_chart(sp500_chart, use_container_width=True)
+
+company_code = ["CONY", "SCHD", "QLD", "SSO", "^IXIC", "^GSPC", "IONQ", "NVDA"]
+
+# Create a list to hold the filtered stock data
+filtered_data = []
+
+for code in company_code:
+    stock_data = fetch_data(code)
+    stock_data = add_moving_averages(stock_data)
+    check_low_vs_moving_averages(stock_data, code)
+    stock_data_filtered = filter_data(stock_data, months)
+    filtered_data.append((code.replace('^IXIC','NASDAQ').replace('^GSPC','S&P 500'), stock_data_filtered))
+
+# Create and display charts in pairs
+for i in range(0, len(filtered_data), 2):
+    col1, col2 = st.columns(2, gap="large")
+    
+    with col1:
+        st.subheader(filtered_data[i][0] + " Chart")
+        chart = create_candlestick_chart(filtered_data[i][1])
+        st.altair_chart(chart, use_container_width=True)
+
+    if i + 1 < len(filtered_data):  # Check if there is a second column
+        with col2:
+            st.subheader(filtered_data[i + 1][0] + " Chart")
+            chart = create_candlestick_chart(filtered_data[i + 1][1])
+            st.altair_chart(chart, use_container_width=True)
 
 st.divider()
-col1, col2 = st.columns(2, gap="large")
-with col1:
-    st.subheader("CONY ETF")
-    cony_chart = create_candlestick_chart(cony_data_filtered)
-    st.altair_chart(cony_chart, use_container_width=True)
-
-with col2:
-    st.subheader("USD ETF")
-    usd_chart = create_candlestick_chart(usd_data_filtered)
-    st.altair_chart(usd_chart, use_container_width=True)
-
-st.divider()
-col1, col2 = st.columns(2, gap="large")
-with col1:
-    st.subheader("IONQ ETF")
-    ionq_chart = create_candlestick_chart(ionq_data_filtered)
-    st.altair_chart(ionq_chart, use_container_width=True)
