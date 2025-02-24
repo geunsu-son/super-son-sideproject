@@ -217,9 +217,6 @@ def create_candlestick_chart(data):
 
 nasdaq_data = fetch_data("^IXIC")
 sp500_data = fetch_data("^GSPC")
-usd_data = fetch_data("USD")
-cony_data = fetch_data("CONY")
-ionq_data = fetch_data("IONQ")
 
 
 company_code = ["QLD", "SSO"]
