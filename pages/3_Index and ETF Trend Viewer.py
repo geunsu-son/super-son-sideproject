@@ -222,7 +222,7 @@ cony_data = fetch_data("CONY")
 ionq_data = fetch_data("IONQ")
 
 
-company_code = ["CONY", "SCHD", "QLD", "SSO", "^IXIC", "^GSPC", "IONQ", "NVDA"]
+company_code = ["QLD", "SSO"]
 
 # Create a list to hold the filtered stock data
 filtered_data = []
