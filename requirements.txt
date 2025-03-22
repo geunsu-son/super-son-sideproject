@@ -1,4 +1,6 @@
 pytesseract
+streamlit
+altair
 Pillow
 opencv-python
 opencv-python-headless

@@ -22,7 +22,7 @@ with st.sidebar:
     )
     st.divider()
     # Slider for selecting time period in months
-    months = st.slider("Select Time Period (months)", 1, 12, 10)
+    months = st.slider("Select Time Period (months)", 1, 36, 24)
 
 st.title("Index and ETF Trend Viewer")
 st.write(
@@ -50,7 +50,7 @@ def fetch_data(ticker):
     with st.spinner(f"Please wait...Loading Data"):
         # Retrieve stock data
         stock = yf.Ticker(ticker)
-        history = stock.history(period="1y", interval="1d")
+        history = stock.history(period="3y", interval="1d")
         data = pd.DataFrame(history)
         data.reset_index(inplace=True)
         data["Date"] = data["Date"].dt.strftime(
@@ -231,19 +231,23 @@ for code in company_code:
     stock_data_filtered = filter_data(stock_data, months)
     filtered_data.append((code.replace('^IXIC','NASDAQ').replace('^GSPC','S&P 500'), stock_data_filtered))
 
-# Create and display charts in pairs
-for i in range(0, len(filtered_data), 2):
-    col1, col2 = st.columns(2, gap="large")
-    
-    with col1:
-        st.subheader(filtered_data[i][0] + " Chart")
-        chart = create_candlestick_chart(filtered_data[i][1])
-        st.altair_chart(chart, use_container_width=True)
+    st.subheader(filtered_data[i][0] + " Chart")
+    chart = create_candlestick_chart(filtered_data[i][1])
+    st.altair_chart(chart, use_container_width=True)
 
-    if i + 1 < len(filtered_data):  # Check if there is a second column
-        with col2:
-            st.subheader(filtered_data[i + 1][0] + " Chart")
-            chart = create_candlestick_chart(filtered_data[i + 1][1])
-            st.altair_chart(chart, use_container_width=True)
+# # Create and display charts in pairs
+# for i in range(0, len(filtered_data), 2):
+#     col1, col2 = st.columns(2, gap="large")
+    
+#     with col1:
+#         st.subheader(filtered_data[i][0] + " Chart")
+#         chart = create_candlestick_chart(filtered_data[i][1])
+#         st.altair_chart(chart, use_container_width=True)
+
+#     if i + 1 < len(filtered_data):  # Check if there is a second column
+#         with col2:
+#             st.subheader(filtered_data[i + 1][0] + " Chart")
+#             chart = create_candlestick_chart(filtered_data[i + 1][1])
+#             st.altair_chart(chart, use_container_width=True)
 
 st.divider()
