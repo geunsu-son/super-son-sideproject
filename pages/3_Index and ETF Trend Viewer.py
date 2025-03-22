@@ -64,6 +64,7 @@ def add_moving_averages(data):
     data["MA_20"] = data["Close"].rolling(window=20).mean()
     data["MA_60"] = data["Close"].rolling(window=60).mean()
     data["MA_120"] = data["Close"].rolling(window=120).mean()
+    data["MA_200"] = data["Close"].rolling(window=200).mean()
     return data
 
 
@@ -74,6 +75,7 @@ def check_low_vs_moving_averages(data, name):
     ma20 = last_row["MA_20"]
     ma60 = last_row["MA_60"]
     ma120 = last_row["MA_120"]
+    ma200 = last_row["MA_200"]
 
     if low_price < ma120:
         st.sidebar.info(
@@ -116,6 +118,7 @@ def create_candlestick_chart(data):
     last_ma20 = data.iloc[-1]["MA_20"]
     last_ma60 = data.iloc[-1]["MA_60"]
     last_ma120 = data.iloc[-1]["MA_120"]
+    last_ma200 = data.iloc[-1]["MA_200"]
 
     # =============== 최근 주가 그리기 ===============
     col1, col2, col3 = st.columns(3)
@@ -132,6 +135,7 @@ def create_candlestick_chart(data):
 
     view_data["Close_Diff_60"] = data["Close"] - last_ma60
     view_data["Close_Diff_120"] = data["Close"] - last_ma120
+    view_data["Close_Diff_200"] = data["Close"] - last_ma200
 
     if len(view_data[view_data["Close_Diff_120"] < 0]) > 0:
         with col2:
@@ -206,8 +210,9 @@ def create_candlestick_chart(data):
     ma20 = base.mark_line(color="orange").encode(alt.Y("MA_20:Q"))
     ma60 = base.mark_line(color="green").encode(alt.Y("MA_60:Q"))
     ma120 = base.mark_line(color="brown").encode(alt.Y("MA_120:Q"))
+    ma200 = base.mark_line(color="gray").encode(alt.Y("MA_200:Q"))
 
-    chart = (rule + bar + ma20 + ma60 + ma120).properties(
+    chart = (rule + bar + ma20 + ma60 + ma120 + ma200).properties(
         width=800,
         height=400,
     )
@@ -219,7 +224,7 @@ nasdaq_data = fetch_data("^IXIC")
 sp500_data = fetch_data("^GSPC")
 
 
-company_code = ["QLD", "SSO"]
+company_code = ["QLD"]
 
 # Create a list to hold the filtered stock data
 filtered_data = []
@@ -231,6 +236,7 @@ for code in company_code:
     stock_data_filtered = filter_data(stock_data, months)
     filtered_data.append((code.replace('^IXIC','NASDAQ').replace('^GSPC','S&P 500'), stock_data_filtered))
 
+for i in range(len(filtered_data)):
     st.subheader(filtered_data[i][0] + " Chart")
     chart = create_candlestick_chart(filtered_data[i][1])
     st.altair_chart(chart, use_container_width=True)
