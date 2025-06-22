@@ -1,6 +1,7 @@
 import streamlit as st
 import unicodedata
 import base64
+from modules.streamlit_utils import sidebar_info
 
 st.set_page_config(
     page_title="맥OS 한글 파일명 자소 분리 수정 : A free online converter",
@@ -9,15 +10,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.sidebar.write(
-    """
-    ### 연락처
-    📞 Tel. 010-4430-2279  
-    📩 E-mail. [gnsu0705@gmail.com](gnsu0705@gmail.com)  
-    💻 Blog. [Super-Son](https://super-son.tistory.com/)  
-    😎 Resume. [Super-Son](https://super-son-resume.streamlit.app)
-    """
-)
+with st.sidebar:
+    sidebar_info()
 
 
 def normalize_filename(filename, include_extension=True):

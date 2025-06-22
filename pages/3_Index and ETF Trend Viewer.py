@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import altair as alt
+from modules.streamlit_utils import sidebar_info
 
 st.set_page_config(
     page_title="Index and ETF Trend Viewer",
@@ -11,15 +12,7 @@ st.set_page_config(
 )
 
 with st.sidebar:
-    st.write(
-        """
-    ### 연락처
-    📞 Tel. 010-4430-2279  
-    📩 E-mail. [gnsu0705@gmail.com](gnsu0705@gmail.com)  
-    💻 Blog. [Super-Son](https://super-son.tistory.com/)  
-    😎 Resume. [Super-Son](https://super-son-resume.streamlit.app)
-    """
-    )
+    sidebar_info()
     st.divider()
     # Slider for selecting time period in months
     months = st.slider("Select Time Period (months)", 1, 36, 24)

@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from io import BytesIO
 import shutil
+from modules.streamlit_utils import sidebar_info
 
 # streamlit config
 st.set_page_config(
@@ -16,15 +17,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.sidebar.write(
-    """
-    ### 연락처
-    📞 Tel. 010-4430-2279  
-    📩 E-mail. [gnsu0705@gmail.com](gnsu0705@gmail.com)  
-    💻 Blog. [Super-Son](https://super-son.tistory.com/)  
-    😎 Resume. [Super-Son](https://super-son-resume.streamlit.app)
-    """
-)
+with st.sidebar:
+    sidebar_info()
 
 def ocr_process(image):
     # 이미지를 numpy 배열로 변환
