@@ -87,21 +87,13 @@ st.divider()
 # 양력 ↔ 음력 변환기
 st.subheader("🔄 양력 ↔ 음력 변환기")
 st.write("양력과 음력 날짜를 상호 변환할 수 있습니다.")
+
+
+
 col1, col2 = st.columns(2)
 with col1:
-    st.warning("음력 → 양력")
-    lunar_input = st.date_input("음력 날짜 (YYYY-MM-DD)", value=default_start)
-    try:
-        y, m, d = map(int, str(lunar_input).split("-"))
-        cal = KoreanLunarCalendar()
-        cal.setLunarDate(y, m, d, False)
-        solar = cal.LunarIsoFormat()
-        st.success(f"📆 양력 날짜: **{solar}**")
-    except Exception as e:
-        st.warning(f"음력 날짜 입력을 확인해주세요 (YYYY-MM-DD) - {e}")
-with col2:
     st.warning("양력 → 음력")
-    solar_input = st.date_input("양력 날짜 (YYYY-MM-DD)", value=default_start)
+    solar_input = st.date_input("양력 날짜 (YYYY-MM-DD)", value=today)
     try:
         y, m, d = map(int, str(solar_input).split("-"))
         cal = KoreanLunarCalendar()
@@ -110,6 +102,17 @@ with col2:
         st.success(f"🌙 음력 날짜: **{lunar}**")
     except Exception as e:
         st.warning(f"양력 날짜 입력을 확인해주세요 (YYYY-MM-DD) - {e}")
+with col2:
+    st.warning("음력 → 양력")
+    lunar_input = st.date_input("음력 날짜 (YYYY-MM-DD)", value=lunar)
+    try:
+        y, m, d = map(int, str(lunar_input).split("-"))
+        cal = KoreanLunarCalendar()
+        cal.setLunarDate(y, m, d, False)
+        solar = cal.SolarIsoFormat()
+        st.success(f"📆 양력 날짜: **{solar}**")
+    except Exception as e:
+        st.warning(f"음력 날짜 입력을 확인해주세요 (YYYY-MM-DD) - {e}")
 st.divider()
 
 # 두 날짜 간 차이 계산
