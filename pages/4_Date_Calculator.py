@@ -1,7 +1,19 @@
 import streamlit as st
 import datetime
+import locale
 from korean_lunar_calendar import KoreanLunarCalendar
 from modules.streamlit_utils import sidebar_info
+
+# 한국어 로케일 설정
+try:
+    locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
+except:
+    locale.setlocale(locale.LC_TIME, '')  # 시스템 기본값으로 fallback
+
+# 날짜 출력 포맷 함수
+def format_korean_date(date_obj):
+    weekdays = ['월', '화', '수', '목', '금', '토', '일']
+    return f"{date_obj.strftime('%Y년 %m월 %d일')} ({weekdays[date_obj.weekday()]})"
 
 st.set_page_config(
     page_title="Date Calculator",
@@ -60,7 +72,7 @@ elif delta_unit == "년":
     except:
         calc_date = base_date
 
-st.success(f"🗓 계산된 날짜: **{calc_date.strftime('%Y-%m-%d')}**")
+st.success(f"🗓 계산된 날짜: **{format_korean_date(calc_date)}**")
 st.divider()
 
 # D-day 계산기
@@ -72,7 +84,8 @@ with col1:
     base_date = st.date_input("기준 날짜 선택", value=today, key="base_date")
 with col2:
     default_start = base_date + datetime.timedelta(days=30)
-    gap_date = st.date_input(label="목표 날짜를 선택해주세요 (기본값: 기준 날짜 + 30일)",value=(today+ datetime.timedelta(days=30)), key="gap_date")
+    gap_date = st.date_input(label="목표 날짜를 선택해주세요 (기본값: 기준 날짜 + 30일)",
+                             value=(today+ datetime.timedelta(days=30)), key="gap_date")
 
 d_day = (gap_date - base_date).days + (1 if include_today else 0)
 if d_day > 0:
@@ -83,17 +96,14 @@ else:
     st.info(f"📅 D+{abs(d_day)} (이미 지남)")
 st.divider()
 
-
 # 양력 ↔ 음력 변환기
 st.subheader("🔄 양력 ↔ 음력 변환기")
 st.write("양력과 음력 날짜를 상호 변환할 수 있습니다.")
 
-
-
 col1, col2 = st.columns(2)
 with col1:
     st.warning("양력 → 음력")
-    solar_input = st.date_input("양력 날짜 (YYYY-MM-DD)", value=today)
+    solar_input = st.date_input("양력 날짜", label_visibility="hidden", value=today)
     try:
         y, m, d = map(int, str(solar_input).split("-"))
         cal = KoreanLunarCalendar()
@@ -101,18 +111,19 @@ with col1:
         lunar = cal.LunarIsoFormat()
         st.success(f"🌙 음력 날짜: **{lunar}**")
     except Exception as e:
-        st.warning(f"양력 날짜 입력을 확인해주세요 (YYYY-MM-DD) - {e}")
+        st.warning(f"양력 날짜 입력을 확인해주세요 - {e}")
 with col2:
     st.warning("음력 → 양력")
-    lunar_input = st.date_input("음력 날짜 (YYYY-MM-DD)", value=lunar)
+    lunar_input = st.date_input("음력 날짜", label_visibility="hidden" ,value=today)
     try:
         y, m, d = map(int, str(lunar_input).split("-"))
         cal = KoreanLunarCalendar()
         cal.setLunarDate(y, m, d, False)
         solar = cal.SolarIsoFormat()
-        st.success(f"📆 양력 날짜: **{solar}**")
+        solar_dt = datetime.datetime.strptime(solar, "%Y-%m-%d").date()
+        st.success(f"🌞 양력 날짜: **{format_korean_date(solar_dt)}**")
     except Exception as e:
-        st.warning(f"음력 날짜 입력을 확인해주세요 (YYYY-MM-DD) - {e}")
+        st.warning(f"음력 날짜 입력을 확인해주세요 - {e}")
 st.divider()
 
 # 두 날짜 간 차이 계산
