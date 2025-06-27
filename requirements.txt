@@ -1,8 +1,1 @@
-pytesseract
 streamlit
-altair
-Pillow
-opencv-python
-opencv-python-headless
-yfinance
-korean_lunar_calendar
