@@ -5,7 +5,7 @@ st.set_page_config(
     page_title="SUPER-SON 사이드프로젝트",
     page_icon="😃",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 # Google Analytics tracking code
